@@ -33,7 +33,7 @@ class BookRequest(BaseModel):
                 "author": "codingwithroby",
                 "description": "A new description of a book",
                 "rating": 5,
-                'published_date': 2029
+                
             }
         }
     }
@@ -51,6 +51,23 @@ BOOKS = [
 async def read_all_books():
     return BOOKS
 
+@app.get("/books/{book_id}")
+async def read_book_by_id(book_id:int):
+    for book in BOOKS:
+        if book.id == book_id:
+            return book
+    return {"message": "Book not found"}
+
+
+@app.get("/books/")
+async def read_book_by_rating(rating: int):
+    result_books=[]
+    for book in BOOKS:
+        if rating == book.rating:
+            result_books.append(book)
+    return result_books
+
+
 @app.post("/books/")
 async def create_book(new_book_req: BookRequest):
     new_book=Book(**new_book_req.dict())
@@ -63,3 +80,21 @@ def find_book_id(book:Book):
     else:
         book.id=1
     return book
+#Update book id
+@app.put("/books/update_book")
+async def update_book(updated_book: BookRequest):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].id == updated_book.id:
+            BOOKS[i]= updated_book
+            return {"message": "Book updated"}
+
+#Delete book by ID
+@app.delete("/books/delete/{book_id}")
+async def delete_book(book_id:int):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].id==book_id:
+            BOOKS.pop(i)
+            break
+    return BOOKS
+    # Return the books list to show that the requested item was deleted.
+
