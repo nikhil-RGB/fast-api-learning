@@ -1,5 +1,5 @@
 from typing import Optional
-
+from datetime import date
 from fastapi import FastAPI, Body
 from pydantic import BaseModel, Field
 app=FastAPI()
@@ -10,13 +10,15 @@ class Book:
     author:str
     description:str
     rating:int
+    published_date: int
 
-    def __init__(self, id:int, title:str, author:str, description:str, rating:int):
+    def __init__(self, id:int, title:str, author:str, description:str, rating:int, published_date: int):
         self.id = id
         self.title = title
         self.author = author
         self.description = description
         self.rating = rating
+        self.published_date= published_date
 
 class BookRequest(BaseModel):
     id:Optional[int]= Field(description="ID is not needed on create",default=None) 
@@ -25,6 +27,7 @@ class BookRequest(BaseModel):
     description:str=Field(min_length=1,max_length=100)
 
     rating:int=Field(gt=0, lt=6)
+    published_date:int=Field(gt=1800, lt=2031)
 
     model_config = {
         "json_schema_extra": {
@@ -33,18 +36,18 @@ class BookRequest(BaseModel):
                 "author": "codingwithroby",
                 "description": "A new description of a book",
                 "rating": 5,
-                
+                "published_date": 2021
             }
         }
     }
 
 BOOKS = [
-    Book(1, 'Computer Science Pro', 'codingwithroby', 'A very nice book!', 5),
-    Book(2, 'Be Fast with FastAPI', 'codingwithroby', 'A great book!', 5),
-    Book(3, 'Master Endpoints', 'codingwithroby', 'A awesome book!', 5),
-    Book(4, 'HP1', 'Author 1', 'Book Description', 2),
-    Book(5, 'HP2', 'Author 2', 'Book Description', 3),
-    Book(6, 'HP3', 'Author 3', 'Book Description', 1)
+    Book(1, 'Computer Science Pro', 'codingwithroby', 'A very nice book!', 5,2013),
+    Book(2, 'Be Fast with FastAPI', 'codingwithroby', 'A great book!', 5,2012),
+    Book(3, 'Master Endpoints', 'codingwithroby', 'A awesome book!', 5,2014),
+    Book(4, 'HP1', 'Author 1', 'Book Description', 2,2015),
+    Book(5, 'HP2', 'Author 2', 'Book Description', 3,2016),
+    Book(6, 'HP3', 'Author 3', 'Book Description', 1,1998)
 ]
 
 @app.get("/books")
