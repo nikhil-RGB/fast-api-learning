@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy import Boolean
 from passlib.context import CryptContext
 from models import Users
+from fastapi.security import OAuth2PasswordRequestForm
 from routers.todos import get_db,Session
 router=APIRouter()
 bcrypt_context=CryptContext(schemes=['bcrypt'],deprecated='auto')
@@ -26,6 +27,16 @@ class UserRequest(BaseModel):
 
 db_dependency=Annotated[Session,Depends(get_db)]
 
+#Attempt to authenticate the user.
+def authenticate_user(username:str,password:str,db):
+    user=db.query(Users).filter(Users.username==username).first()
+    if not user:
+        return False
+    elif not bcrypt_context.verify(password,user.hashed_password):
+        return False
+    return True
+
+
 @router.get("/auth/")
 async def  get_user():
     return {'user':'authenticated'}
@@ -43,4 +54,14 @@ async def create_user(user_request:UserRequest,db:db_dependency):
      )
      db.add(create_user_model)
      db.commit()
-     return create_user_model    
+     return create_user_model
+
+@router.post("/token")
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,Depends()],db:db_dependency):
+    user=authenticate_user(form_data.username,form_data.password,db)
+    if user:
+        return "User Authenticated"
+    else:
+        return "Authentication Failed"
+    
+    
