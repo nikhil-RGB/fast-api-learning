@@ -9,7 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 """ 
 This is simply the address of your database. Think of it like a file path. You're using SQLite, which is a lightweight database that lives as a single file (todos.db) right in your project folder. When you run the app, this file gets created automatically if it doesn't already exist.
 """
-SQLALCHEMY_DATABASE_URL="sqlite:///./todos.db"
+SQLALCHEMY_DATABASE_URL="sqlite:///./todosapp.db"
 
 """ 
 The engine is the actual connection to your database — it's what "powers" all communication between your app and the todos.db file.
