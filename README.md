@@ -10,7 +10,7 @@
  
 > **Context:** Built as part of a Udemy course on FastAPI. This is a RESTful backend for a todo list application with user authentication, JWT tokens, and a SQLite database.
  
----
+
  
 ## Project Structure
  
@@ -26,7 +26,7 @@ todoapp/
 └── venv/                 # Python virtual environment
 ```
  
----
+
  
 ## Tech Stack
  
@@ -40,7 +40,7 @@ todoapp/
 | **python-jose** | JWT token creation and decoding |
 | **OAuth2PasswordBearer** | FastAPI's built-in OAuth2 token scheme |
  
----
+
  
 ## File-by-File Breakdown
  
@@ -52,8 +52,7 @@ This is the lowest layer of the project. It sets up three things:
 2. **SessionLocal** — A factory that creates database sessions. A session is a temporary workspace for reading/writing — you open one per request, do your work, then close it.
 3. **Base** — The declarative base that all model classes inherit from, so SQLAlchemy knows they represent database tables.
  
----
- 
+
 ### `models.py` — Database Tables
  
 Defines two tables as Python classes:
@@ -70,7 +69,7 @@ id (PK) | email (unique) | username (unique) | first_name | last_name | hashed_p
  
 The `owner_id` field in `Todos` is a foreign key linking each todo to its creator. (Note: the relationship is declared in the DB schema but the current todo CRUD routes don't yet filter todos by the logged-in user — that's a natural next step.)
  
----
+
  
 ### `main.py` — App Entry Point
  
@@ -195,24 +194,26 @@ POST /todo  (body: title, description, priority, complete)
  
 **Router Prefixes** — `APIRouter(prefix='/auth', tags=['auth'])` groups auth routes cleanly. The `/auth` prefix is added automatically to all routes in that file.
  
----
+
  
 ## Current Limitations / Natural Next Steps
  
-1. **Todos are not user-scoped yet** — `owner_id` exists in the model but `todos.py` routes don't filter by the logged-in user. Adding `Depends(get_current_user)` to todo routes and filtering by `owner_id == current_user['id']` would fix this.
-2. **No role-based access control** — The `role` field is stored but not enforced anywhere yet.
-3. **Secret key is hardcoded** — In production, this should come from an environment variable.
-4. **No refresh tokens** — Tokens expire in 20 minutes with no way to renew without re-logging in.
+
+1. **Secret key is hardcoded** — In production, this should come from an environment variable.
+2. **No refresh tokens** — Tokens expire in 20 minutes with no way to renew without re-logging in.
  
----
+
  
-## Summary for Mentor Presentation
+## Summary
  
 This project is a FastAPI backend for a todo application that demonstrates a clean separation of concerns across three layers:
  
 The **data layer** (`database.py` + `models.py`) uses SQLAlchemy to define two tables — users and todos — connected by a foreign key. SQLite serves as the database, with the engine and session configured in `database.py`.
  
 The **routing layer** (`routers/`) splits business logic into two files: `todos.py` handles standard CRUD operations on todos with Pydantic validation, while `auth.py` handles the full authentication lifecycle — registration, password hashing with bcrypt, JWT token generation on login, and a reusable `get_current_user` dependency for protecting routes.
+`users.py` handles all the user routes- including password change api endpoints and user information aquisition.
+`admin.py` handles all admin-related routes, including the ability to read all users from the user table, delete a user and delete a todo.
+
  
 The **entry point** (`main.py`) wires everything together: it creates database tables on startup and registers both routers with the FastAPI app.
  
