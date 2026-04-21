@@ -54,9 +54,7 @@ def authenticate_user(username:str,password:str,db):
     return user
 
 
-@router.get("/")
-async def  get_user():
-    return {'user':'authenticated'}
+
 
 
 def create_access_token(username: str, user_id: int,role:str, expires_delta: timedelta):

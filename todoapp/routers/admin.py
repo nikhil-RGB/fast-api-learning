@@ -51,7 +51,7 @@ async def delete_user(user:user_dependency,db:db_dependency,owner_id:int=Path(gt
     db.commit()
 # created by me, get all users registered in the database
 @router.get("/todo/show_users",status_code=status.HTTP_200_OK)
-async def show_users(user:user_dependency,db:db_dependency,owner_id:int=Path(gt=0)):
+async def show_users(user:user_dependency,db:db_dependency):
     if user is None or user.get('user_role')!='admin':
         raise HTTPException(status_code=401, detail='Authentication failed')
     user_models=db.query(models.Users).all()
