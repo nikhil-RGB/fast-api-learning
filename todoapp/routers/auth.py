@@ -30,6 +30,7 @@ class UserRequest(BaseModel):
     last_name:str
     password:str
     role: str
+    phone_number:str
 
 def get_db():
         db= SessionLocal()
@@ -87,7 +88,8 @@ async def create_user(user_request:UserRequest,db:db_dependency):
          last_name=user_request.last_name,
          hashed_password= bcrypt_context.hash(user_request.password),
          is_active=True,
-         role=user_request.role
+         role=user_request.role,
+         phone_number=user_request.phone_number
      )
      db.add(create_user_model)
      db.commit()
