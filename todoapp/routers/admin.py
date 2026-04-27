@@ -2,7 +2,7 @@ from typing import Annotated
 from pydantic import BaseModel, Field
 from starlette import status
 from fastapi import APIRouter, Depends, HTTPException, Path
-from ..models import Todos
+from ..models import Todos, Users
 from ..database import SessionLocal
 from sqlalchemy.orm import Session
 from .auth import get_current_user
@@ -27,13 +27,13 @@ async def read_all(user: user_dependency, db: db_dependency):
     if user is None or user.get('user_role')!='admin':
         raise HTTPException(status_code=401, detail='Authentication failed')
         
-    return db.query(models.Todos).all()
+    return db.query(Todos).all()
 # created by me, delete a certain todo
 @router.delete("/todo/delete/{todo_id}",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(user:user_dependency,db:db_dependency,todo_id:int=Path(gt=0)):
     if user is None or user.get('user_role')!='admin':
         raise HTTPException(status_code=401, detail='Authentication failed')
-    todo_model=db.query(models.Todos).filter(models.Todos.id==todo_id).first()
+    todo_model=db.query(Todos).filter(Todos.id==todo_id).first()
     if todo_model is None:
         raise HTTPException(status_code=404, detail="Todo not found!")
     db.delete(todo_model)
@@ -43,10 +43,10 @@ async def delete_todo(user:user_dependency,db:db_dependency,todo_id:int=Path(gt=
 async def delete_user(user:user_dependency,db:db_dependency,owner_id:int=Path(gt=0)):
     if user is None or user.get('user_role')!='admin':
         raise HTTPException(status_code=401, detail='Authentication failed')
-    user_model=db.query(models.Users).filter(models.Users.id==owner_id).first()
+    user_model=db.query(Users).filter(Users.id==owner_id).first()
     if user_model is None:
         raise HTTPException(status_code=404, detail="User Not Found")
-    db.query(models.Todos).filter(models.Todos.owner_id == owner_id).delete()
+    db.query(Todos).filter(Todos.owner_id == owner_id).delete()
     db.delete(user_model)
     db.commit()
 # created by me, get all users registered in the database
@@ -54,7 +54,7 @@ async def delete_user(user:user_dependency,db:db_dependency,owner_id:int=Path(gt
 async def show_users(user:user_dependency,db:db_dependency):
     if user is None or user.get('user_role')!='admin':
         raise HTTPException(status_code=401, detail='Authentication failed')
-    user_models=db.query(models.Users).all()
+    user_models=db.query(Users).all()
     return user_models
 
 

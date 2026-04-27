@@ -7,9 +7,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 import os
+from pathlib import Path
+
+load_dotenv(Path(__file__).parent / ".env")
 
 
-load_dotenv()
 """ 
 This is simply the address of your database. Think of it like a file path. You're using SQLite, which is a lightweight database that lives as a single file (todos.db) right in your project folder. When you run the app, this file gets created automatically if it doesn't already exist.
 """
