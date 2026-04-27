@@ -1,12 +1,12 @@
 from typing import Annotated
 from starlette import status
-from database import SessionLocal
+from ..database import SessionLocal
 from fastapi import Depends, FastAPI, APIRouter,HTTPException
 from pydantic import BaseModel
 from sqlalchemy import Boolean
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from models import Users
+from ..models import Users
 from fastapi.security import OAuth2PasswordRequestForm,OAuth2PasswordBearer
 from jose import jwt,JWTError
 from datetime import datetime, timedelta,timezone
