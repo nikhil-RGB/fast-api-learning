@@ -3,8 +3,7 @@ Note: Comments added in from Claude, to explain the code for database.py
 These pull in tools from SQLAlchemy, which is Python's most popular ORM library.
 """
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 import os
 from pathlib import Path
